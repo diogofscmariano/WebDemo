@@ -4,12 +4,11 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: windows-latest
     strategy:
-      max-parallel: 4
       matrix:
         python-version: [3.6]
+        browser: [ie, firefox, chrome]
 
     steps:
     - uses: actions/checkout@v1
@@ -21,6 +20,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+    # For IE Webdriver
     - name: Cache IEDriver
       uses: actions/cache@v1
       id: iedriver-cache
@@ -31,6 +31,5 @@ jobs:
       uses: warrenbuckley/Setup-Nuget@v1
     - if: matrix.browser == 'ie' && steps.iedriver-cache.outputs.cache-hit != 'true'
       run: nuget install Selenium.WebDriver.IEDriver -Version 3.150.0
-    - name: Test with pytest
-      run: |
-        robot --variable BROWSER:IE login_tests
+      # Run    
+    - run: robot --variable BROWSER:${{ matrix.browser }} login_tests
