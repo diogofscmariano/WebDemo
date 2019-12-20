@@ -21,6 +21,16 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+    - name: Cache IEDriver
+      uses: actions/cache@v1
+      id: iedriver-cache
+      with:
+        path: Selenium.WebDriver.IEDriver.3.150.0
+        key: IEDriver.3.150.0
+    - if: matrix.browser == 'ie'
+      uses: warrenbuckley/Setup-Nuget@v1
+    - if: matrix.browser == 'ie' && steps.iedriver-cache.outputs.cache-hit != 'true'
+      run: nuget install Selenium.WebDriver.IEDriver -Version 3.150.0
     - name: Test with pytest
       run: |
-        robot login_tests
+        robot --variable BROWSER:IE login_tests
