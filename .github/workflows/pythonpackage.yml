@@ -23,4 +23,6 @@ jobs:
     - uses: nanasess/setup-chromedriver@master
       with:
         chromedriver-version: '77.0.3865.40'
+    - run: python demoapp/server.py 
     - run: robot --variable BROWSER:${{ matrix.browser }} login_tests
+    - run: pkill -f server.py
